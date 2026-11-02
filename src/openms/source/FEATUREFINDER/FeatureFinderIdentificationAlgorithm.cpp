@@ -615,10 +615,16 @@ namespace OpenMS
         if (first_group) candidates.setProteinIdentifications(candidates_cv.getProteinIdentifications());
       }
 
+      const std::string cv_suffix = "_CV" + StringUtils::toStr(group_cv);
+
       // Annotate features with FAIMS CV and add to results
       for (auto& feat : features_cv)
       {
         feat.setMetaValue(Constants::UserParam::FAIMS_CV, group_cv);
+        for (Feature& sub : feat.getSubordinates())
+        {
+          if (sub.metaValueExists("native_id")) sub.setMetaValue("native_id", StringUtils::toStr(sub.getMetaValue("native_id")) + cv_suffix);
+        }
         features.push_back(feat);
       }
 
@@ -636,7 +642,6 @@ namespace OpenMS
       }
 
       // Combine chromatograms
-      const std::string cv_suffix = "_CV" + StringUtils::toStr(group_cv);
       for (auto& chrom : ffid_group.getChromatograms().getChromatograms())
       {
         chrom.setMetaValue(Constants::UserParam::FAIMS_CV, group_cv);

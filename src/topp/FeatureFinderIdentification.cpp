@@ -187,9 +187,12 @@ protected:
     std::string candidates_in = getStringOption_("candidates_in");
     std::string id = getStringOption_("id");
 
+    Param algo_defaults = FeatureFinderIdentificationAlgorithm().getDefaults();
+    algo_defaults.remove("keep_chromatograms");
+
     FeatureFinderIdentificationAlgorithm ffid_algo;
     ffid_algo.getProgressLogger().setLogType(log_type_);
-    ffid_algo.setParameters(getParam_().copySubset(FeatureFinderIdentificationAlgorithm().getDefaults()));
+    ffid_algo.setParameters(getParam_().copySubset(algo_defaults));
 
     // Determine output feature type once, before branches diverge.
     // Main path: derive from -id; re-score path: derive from -candidates_in.
@@ -230,7 +233,7 @@ protected:
       //-------------------------------------------------------------
       FeatureFinderIdentificationAlgorithm ffid_algo_run;
       ffid_algo_run.getProgressLogger().setLogType(log_type_);
-      Param algo_params = getParam_().copySubset(FeatureFinderIdentificationAlgorithm().getDefaults());
+      Param algo_params = getParam_().copySubset(algo_defaults);
       algo_params.setValue("keep_chromatograms", chrom_out.empty() ? "false" : "true");
       ffid_algo_run.setParameters(algo_params);
       ffid_algo_run.setMSData(std::move(ms_data_full));
